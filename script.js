@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Sample product data
     const products = [
         {
             id: 1,
@@ -41,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let selectedProducts = [];
     let totalPrice = 0;
 
-    // Render products
     function renderProducts() {
         productContainer.innerHTML = '';
 
@@ -54,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 productCard.classList.add('selected');
             }
 
-            // Create custom checkbox
             const checkboxContainer = document.createElement('label');
             checkboxContainer.className = 'checkbox-container';
             checkboxContainer.innerHTML = `
@@ -62,7 +59,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 <span class="checkmark"></span>
             `;
 
-            // Create product header
             const productHeader = document.createElement('div');
             productHeader.className = 'product-header';
             productHeader.innerHTML = `
@@ -70,7 +66,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="offer-badge">BOGO</div>
             `;
 
-            // Create price container
             const priceContainer = document.createElement('div');
             priceContainer.className = 'price-container';
             priceContainer.innerHTML = `
@@ -78,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="original-price">$${product.originalPrice.toFixed(2)}</div>
             `;
 
-            // Create product options
             const productOptions = document.createElement('div');
             productOptions.className = 'product-options';
 
@@ -105,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 productOptions.appendChild(optionGroup);
             }
 
-            // Assemble product card
             productCard.appendChild(checkboxContainer);
             productCard.appendChild(productHeader);
             productCard.appendChild(priceContainer);
@@ -114,26 +107,21 @@ document.addEventListener('DOMContentLoaded', function () {
             productContainer.appendChild(productCard);
         });
 
-        // Add event listeners to checkboxes
         document.querySelectorAll('.checkbox-container input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', function (e) {
-                e.stopPropagation(); // Prevent the card click event from firing
-
+                e.stopPropagation();
                 const productId = parseInt(this.id.split('-')[1]);
                 const product = products.find(p => p.id === productId);
                 const productCard = this.closest('.product-card');
 
                 if (this.checked) {
-                    // Select product (but limit to 2 for BOGO)
                     if (selectedProducts.length < 2) {
                         selectedProducts.push(product);
                         productCard.classList.add('selected');
                     } else {
-                        // If already 2 selected, uncheck this one
                         this.checked = false;
                     }
                 } else {
-                    // Deselect product
                     selectedProducts = selectedProducts.filter(p => p.id !== productId);
                     productCard.classList.remove('selected');
                 }
@@ -142,12 +130,9 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        // Add click event to entire product card (excluding checkboxes and selects)
         document.querySelectorAll('.product-card').forEach(card => {
             card.addEventListener('click', function (e) {
-                // Don't toggle if clicking on a select element or checkbox
                 if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
-
                 const checkbox = this.querySelector('input[type="checkbox"]');
                 checkbox.checked = !checkbox.checked;
                 const event = new Event('change');
@@ -156,25 +141,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Update cart section
     function updateCart() {
         if (selectedProducts.length > 0) {
             cartSection.classList.remove('hidden');
-
-            // Calculate total price (BOGO: pay for the more expensive item)
             if (selectedProducts.length === 2) {
                 totalPrice = Math.max(selectedProducts[0].currentPrice, selectedProducts[1].currentPrice);
             } else {
                 totalPrice = selectedProducts[0].currentPrice;
             }
-
             totalPriceElement.textContent = `Total: $${totalPrice.toFixed(2)}`;
         } else {
             cartSection.classList.add('hidden');
         }
     }
 
-    // Add to cart button event
     addToCartButton.addEventListener('click', function () {
         if (selectedProducts.length === 0) return;
 
@@ -193,11 +173,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         alert(message);
-
-        // In a real app, you would send this to your cart/checkout system
         console.log("Products added to cart:", selectedProducts);
     });
 
-    // Initial render
     renderProducts();
 });
